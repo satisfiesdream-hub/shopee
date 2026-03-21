@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>A&amp;A Shopee</title>
+  <link rel="stylesheet" href="src/css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar">
+  <div class="nav-logo"><img src="src/images/logo.png" alt="A&A Shopee" class="logo-img"/></div>
+  <ul class="nav-links">
+    <li><a href="#" class="active">Shop</a></li>
+    <li><a href="#">Skincare</a></li>
+    <li><a href="#">Jewellery</a></li>
+    <li><a href="#">Collections</a></li>
+  </ul>
+  <div class="nav-search">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Search products..."/>
+  </div>
+  <div class="nav-actions">
+    <i class="fa-regular fa-heart"></i>
+    <div class="cart-icon" onclick="toggleCart()">
+      <i class="fa-solid fa-bag-shopping"></i>
+      <span class="cart-badge" id="cartBadge">0</span>
+    </div>
+    <div class="avatar">A</div>
+  </div>
+</nav>
+
+<!-- ── HERO BANNER ── -->
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-sub">New Season Arrivals</p>
+    <h1>Radiance<br/><em>Redefined</em></h1>
+    <p class="hero-desc">Luxury cosmetics, skincare & fine jewellery curated for you.</p>
+    <button class="btn-primary" onclick="scrollToShop()">Explore Collection</button>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-card">
+      <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=300&q=80" alt="Rose Gold Serum"/>
+      <p>Rose Gold Serum</p>
+      <span>$89.00</span>
+    </div>
+    <div class="hero-card-stack">
+      <div class="hero-card">
+        <img src="https://images.unsplash.com/photo-1586495777744-4e6232bf2f9b?w=300&q=80" alt="Lipstick"/>
+        <p>Velvet Lipstick</p>
+        <span>$34.00</span>
+      </div>
+      <div class="hero-card">
+        <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=300&q=80" alt="Earrings"/>
+        <p>Diamond Drops</p>
+        <span>$149.00</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CATEGORY PILLS ── -->
+<section class="categories" id="shop">
+  <button class="cat-pill active" onclick="filterProducts('all',this)">All</button>
+  <button class="cat-pill" onclick="filterProducts('cosmetic',this)">💄 Cosmetics</button>
+  <button class="cat-pill" onclick="filterProducts('skincare',this)">✨ Skincare</button>
+  <button class="cat-pill" onclick="filterProducts('jewellery',this)">💎 Jewellery</button>
+  <button class="cat-pill" onclick="filterProducts('fragrance',this)">🌸 Fragrance</button>
+</section>
+
+<!-- ── SORT BAR ── -->
+<div class="sort-bar">
+  <p id="productCount">Showing all products</p>
+  <select onchange="renderProducts(currentFilter)">
+    <option>Featured</option>
+    <option>Price: Low to High</option>
+    <option>Price: High to Low</option>
+    <option>Top Rated</option>
+  </select>
+</div>
+
+<!-- ── PRODUCT GRID ── -->
+<section class="product-grid" id="productGrid"></section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="nav-logo"><img src="src/images/logo.png" alt="A&A Shopee" class="logo-img"/></div>
+      <p>Luxury cosmetics, skincare & fine jewellery curated for the modern woman.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#">Cosmetics</a></li>
+        <li><a href="#">Skincare</a></li>
+        <li><a href="#">Jewellery</a></li>
+        <li><a href="#">Fragrance</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Help</h4>
+      <ul>
+        <li><a href="#">Track Order</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Shipping Info</a></li>
+        <li><a href="#">Contact Us</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 A&amp;A Shopee. All rights reserved.</p>
+    <div class="footer-pay">
+      <i class="fa-brands fa-cc-visa"></i>
+      <i class="fa-brands fa-cc-mastercard"></i>
+      <i class="fa-brands fa-cc-paypal"></i>
+      <i class="fa-brands fa-apple-pay"></i>
+    </div>
+  </div>
+</footer>
+
+<!-- ── CART DRAWER ── -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h2>Your Bag</h2>
+    <button onclick="toggleCart()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty"><i class="fa-regular fa-bag-shopping"></i><p>Your bag is empty</p></div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total">
+      <span>Subtotal</span><span id="cartTotal">$0.00</span>
+    </div>
+    <button class="btn-primary full" onclick="goToCheckout()">Proceed to Checkout</button>
+  </div>
+</aside>
+
+<!-- ── CHECKOUT MODAL ── -->
+<div class="modal-overlay" id="checkoutOverlay">
+  <div class="checkout-modal">
+    <button class="modal-close" onclick="closeCheckout()"><i class="fa-solid fa-xmark"></i></button>
+
+    <!-- Steps -->
+    <div class="steps">
+      <div class="step active" id="step1Dot"><span>1</span>Delivery</div>
+      <div class="step-line"></div>
+      <div class="step" id="step2Dot"><span>2</span>Payment</div>
+      <div class="step-line"></div>
+      <div class="step" id="step3Dot"><span>3</span>Confirm</div>
+    </div>
+
+    <!-- Step 1: Delivery -->
+    <div class="step-content" id="stepDelivery">
+      <h3>Delivery Details</h3>
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input type="text" placeholder="Aria"/></div>
+        <div class="form-group"><label>Last Name</label><input type="text" placeholder="Rose"/></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" placeholder="aria@lumiere.com"/></div>
+      <div class="form-group"><label>Phone</label><input type="tel" placeholder="+1 (555) 000-0000"/></div>
+      <div class="form-group"><label>Address</label><input type="text" placeholder="123 Blossom Street"/></div>
+      <div class="form-row">
+        <div class="form-group"><label>City</label><input type="text" placeholder="New York"/></div>
+        <div class="form-group"><label>ZIP</label><input type="text" placeholder="10001"/></div>
+      </div>
+      <div class="delivery-options">
+        <label class="delivery-opt selected"><input type="radio" name="delivery" checked/>
+          <i class="fa-solid fa-truck"></i><div><b>Standard</b><small>3–5 days · Free</small></div>
+        </label>
+        <label class="delivery-opt"><input type="radio" name="delivery"/>
+          <i class="fa-solid fa-bolt"></i><div><b>Express</b><small>1–2 days · $9.99</small></div>
+        </label>
+      </div>
+      <button class="btn-primary full" onclick="goStep(2)">Continue to Payment</button>
+    </div>
+
+    <!-- Step 2: Payment -->
+    <div class="step-content hidden" id="stepPayment">
+      <h3>Payment Method</h3>
+      <div class="pay-tabs">
+        <button class="pay-tab active" onclick="switchPay('card',this)"><i class="fa-solid fa-credit-card"></i> Card</button>
+        <button class="pay-tab" onclick="switchPay('paypal',this)"><i class="fa-brands fa-paypal"></i> PayPal</button>
+        <button class="pay-tab" onclick="switchPay('apple',this)"><i class="fa-brands fa-apple-pay"></i> Apple Pay</button>
+      </div>
+      <div id="cardForm">
+        <div class="card-preview">
+          <div class="card-chip"></div>
+          <p class="card-num" id="previewNum">•••• •••• •••• ••••</p>
+          <div class="card-bottom">
+            <span id="previewName">CARD HOLDER</span>
+            <span id="previewExp">MM/YY</span>
+          </div>
+        </div>
+        <div class="form-group"><label>Card Number</label>
+          <input type="text" placeholder="1234 5678 9012 3456" maxlength="19"
+            oninput="fmtCard(this)" onkeyup="document.getElementById('previewNum').textContent=this.value||'•••• •••• •••• ••••'"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Expiry</label>
+            <input type="text" placeholder="MM/YY" maxlength="5"
+              onkeyup="document.getElementById('previewExp').textContent=this.value||'MM/YY'"/>
+          </div>
+          <div class="form-group"><label>CVV</label><input type="password" placeholder="•••" maxlength="3"/></div>
+        </div>
+        <div class="form-group"><label>Name on Card</label>
+          <input type="text" placeholder="ARIA ROSE"
+            onkeyup="document.getElementById('previewName').textContent=this.value||'CARD HOLDER'"/>
+        </div>
+      </div>
+      <div id="altPay" class="hidden alt-pay-msg"><i class="fa-solid fa-circle-check"></i> You'll be redirected to complete payment securely.</div>
+      <div class="form-row" style="margin-top:1.5rem">
+        <button class="btn-outline" onclick="goStep(1)">Back</button>
+        <button class="btn-primary" onclick="goStep(3)">Review Order</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Confirm -->
+    <div class="step-content hidden" id="stepConfirm">
+      <h3>Order Summary</h3>
+      <div class="order-summary" id="orderSummary"></div>
+      <div class="summary-totals">
+        <div><span>Subtotal</span><span id="confirmSubtotal"></span></div>
+        <div><span>Shipping</span><span>Free</span></div>
+        <div class="total-row"><span>Total</span><span id="confirmTotal"></span></div>
+      </div>
+      <div class="form-row" style="margin-top:1.5rem">
+        <button class="btn-outline" onclick="goStep(2)">Back</button>
+        <button class="btn-primary" onclick="placeOrder()"><i class="fa-solid fa-lock"></i> Place Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SUCCESS TOAST ── -->
+<div class="toast" id="toast">
+  <i class="fa-solid fa-circle-check"></i>
+  <div><b>Order Placed!</b><p>Thank you! Your order is confirmed 🎉</p></div>
+</div>
+
+<script src="src/js/app.js"></script>
+</body>
+</html>
