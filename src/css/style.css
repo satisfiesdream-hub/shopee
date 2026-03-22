@@ -291,8 +291,14 @@ img { max-width: 100%; display: block; }
 .card-chip { width: 32px; height: 24px; background: #f59e0b; border-radius: 4px; margin-bottom: .75rem; }
 .card-num { font-size: 1rem; letter-spacing: .15em; margin-bottom: .75rem; }
 .card-bottom { display: flex; justify-content: space-between; font-size: .8rem; opacity: .85; }
-.alt-pay-msg { text-align: center; padding: 2rem; color: var(--muted); font-size: .9rem; display: flex; align-items: center; justify-content: center; gap: .5rem; }
-.alt-pay-msg i { color: #10b981; font-size: 1.2rem; }
+.qr-payment {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 1rem 0; gap: .75rem;
+}
+.qr-label { font-size: 1rem; font-weight: 600; color: var(--text); }
+.qr-img { width: 220px; height: 220px; object-fit: contain; border: 2px solid var(--border); border-radius: 12px; padding: .5rem; }
+.qr-hint { font-size: .8rem; color: var(--muted); text-align: center; display: flex; align-items: center; gap: .4rem; max-width: 280px; line-height: 1.5; }
+.qr-hint i { color: var(--primary); flex-shrink: 0; }
 .order-summary { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1rem; }
 .order-item { display: flex; align-items: center; gap: .75rem; padding: .5rem 0; border-bottom: 1px solid var(--border); }
 .order-item img { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; }

@@ -1,3 +1,6 @@
+const USD_TO_INR = 84;
+const inr = v => '₹' + (v * USD_TO_INR).toLocaleString('en-IN');
+
 const products = [
   { id:1, name:'Rose Gold Serum', brand:'Lumière', category:'skincare', price:89, original:120, img:'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80', rating:4.8, reviews:214, badge:'sale' },
   { id:2, name:'Velvet Matte Lipstick', brand:'Rouge', category:'cosmetic', price:34, original:null, img:'https://images.unsplash.com/photo-1586495777744-4e6232bf2f9b?w=400&q=80', rating:4.6, reviews:189, badge:'new' },
@@ -37,8 +40,8 @@ function renderProducts(filter = 'all') {
           <span class="rating-count">(${p.reviews})</span>
         </div>
         <div class="product-price">
-          <span class="price-current">$${p.price.toFixed(2)}</span>
-          ${p.original ? `<span class="price-original">$${p.original.toFixed(2)}</span><span class="price-discount">-${discount}%</span>` : ''}
+          <span class="price-current">${inr(p.price)}</span>
+          ${p.original ? `<span class="price-original">${inr(p.original)}</span><span class="price-discount">-${discount}%</span>` : ''}
         </div>
         <button class="btn-add-cart" onclick="addToCart(${p.id})">
           <i class="fa-solid fa-bag-shopping"></i> Add to Bag
@@ -80,7 +83,7 @@ function updateCartUI() {
       <img src="${i.img}" alt="${i.name}"/>
       <div class="cart-item-info">
         <p>${i.name}</p>
-        <span>$${(i.price * i.qty).toFixed(2)}</span>
+        <span>${inr(i.price * i.qty)}</span>
         <div class="cart-item-qty">
           <button class="qty-btn" onclick="changeQty(${i.id},-1)">−</button>
           <span class="qty-val">${i.qty}</span>
@@ -90,7 +93,7 @@ function updateCartUI() {
       <button class="cart-item-remove" onclick="removeItem(${i.id})"><i class="fa-solid fa-trash"></i></button>
     </div>`).join('');
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  document.getElementById('cartTotal').textContent = `$${subtotal.toFixed(2)}`;
+  document.getElementById('cartTotal').textContent = inr(subtotal);
 }
 
 function changeQty(id, delta) {
@@ -158,10 +161,10 @@ function renderOrderSummary() {
     <div class="order-item">
       <img src="${i.img}" alt="${i.name}"/>
       <div class="order-item-info"><p>${i.name}</p><span>Qty: ${i.qty}</span></div>
-      <span class="order-item-price">$${(i.price * i.qty).toFixed(2)}</span>
+      <span class="order-item-price">${inr(i.price * i.qty)}</span>
     </div>`).join('');
-  document.getElementById('confirmSubtotal').textContent = `$${subtotal.toFixed(2)}`;
-  document.getElementById('confirmTotal').textContent = `$${subtotal.toFixed(2)}`;
+  document.getElementById('confirmSubtotal').textContent = inr(subtotal);
+  document.getElementById('confirmTotal').textContent = inr(subtotal);
 }
 
 function switchPay(type, btn) {

@@ -45,18 +45,18 @@
     <div class="hero-card">
       <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=300&q=80" alt="Rose Gold Serum"/>
       <p>Rose Gold Serum</p>
-      <span>$89.00</span>
+      <span>₹7,476</span>
     </div>
     <div class="hero-card-stack">
       <div class="hero-card">
         <img src="https://images.unsplash.com/photo-1586495777744-4e6232bf2f9b?w=300&q=80" alt="Lipstick"/>
         <p>Velvet Lipstick</p>
-        <span>$34.00</span>
+        <span>₹2,856</span>
       </div>
       <div class="hero-card">
         <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=300&q=80" alt="Earrings"/>
         <p>Diamond Drops</p>
-        <span>$149.00</span>
+        <span>₹12,516</span>
       </div>
     </div>
   </div>
@@ -191,37 +191,11 @@
     <!-- Step 2: Payment -->
     <div class="step-content hidden" id="stepPayment">
       <h3>Payment Method</h3>
-      <div class="pay-tabs">
-        <button class="pay-tab active" onclick="switchPay('card',this)"><i class="fa-solid fa-credit-card"></i> Card</button>
-        <button class="pay-tab" onclick="switchPay('paypal',this)"><i class="fa-brands fa-paypal"></i> PayPal</button>
-        <button class="pay-tab" onclick="switchPay('apple',this)"><i class="fa-brands fa-apple-pay"></i> Apple Pay</button>
+      <div class="qr-payment">
+        <p class="qr-label">Scan to Pay</p>
+        <img src="src/images/QR_Payment.png" alt="QR Payment" class="qr-img"/>
+        <p class="qr-hint"><i class="fa-solid fa-circle-info"></i> Open your payment app and scan the QR code to complete your order.</p>
       </div>
-      <div id="cardForm">
-        <div class="card-preview">
-          <div class="card-chip"></div>
-          <p class="card-num" id="previewNum">•••• •••• •••• ••••</p>
-          <div class="card-bottom">
-            <span id="previewName">CARD HOLDER</span>
-            <span id="previewExp">MM/YY</span>
-          </div>
-        </div>
-        <div class="form-group"><label>Card Number</label>
-          <input type="text" placeholder="1234 5678 9012 3456" maxlength="19"
-            oninput="fmtCard(this)" onkeyup="document.getElementById('previewNum').textContent=this.value||'•••• •••• •••• ••••'"/>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Expiry</label>
-            <input type="text" placeholder="MM/YY" maxlength="5"
-              onkeyup="document.getElementById('previewExp').textContent=this.value||'MM/YY'"/>
-          </div>
-          <div class="form-group"><label>CVV</label><input type="password" placeholder="•••" maxlength="3"/></div>
-        </div>
-        <div class="form-group"><label>Name on Card</label>
-          <input type="text" placeholder="ARIA ROSE"
-            onkeyup="document.getElementById('previewName').textContent=this.value||'CARD HOLDER'"/>
-        </div>
-      </div>
-      <div id="altPay" class="hidden alt-pay-msg"><i class="fa-solid fa-circle-check"></i> You'll be redirected to complete payment securely.</div>
       <div class="form-row" style="margin-top:1.5rem">
         <button class="btn-outline" onclick="goStep(1)">Back</button>
         <button class="btn-primary" onclick="goStep(3)">Review Order</button>
