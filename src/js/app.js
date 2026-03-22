@@ -1,5 +1,6 @@
 const USD_TO_INR = 84;
 const inr = v => '₹' + (v * USD_TO_INR).toLocaleString('en-IN');
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyPicg_999hWZfQ7tlxdG4gXDMq_GNk698Hrt22A-co0TnehK4zndWmpbM1rM9pqhYA/exec';
 
 const products = [
   { id:1, name:'Rose Gold Serum', brand:'Lumière', category:'skincare', price:89, original:120, img:'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80', rating:4.8, reviews:214, badge:'sale' },
@@ -203,6 +204,10 @@ function placeOrder() {
   const orders = JSON.parse(localStorage.getItem('aa_orders') || '[]');
   orders.push(order);
   localStorage.setItem('aa_orders', JSON.stringify(orders));
+
+  const form = new FormData();
+  Object.keys(order).forEach(k => form.append(k, order[k]));
+  fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', body: form });
 
   closeCheckout();
   cart = [];
