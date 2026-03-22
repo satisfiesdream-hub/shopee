@@ -179,6 +179,31 @@ function fmtCard(input) {
 }
 
 function placeOrder() {
+  const name = document.querySelector('#stepDelivery input[placeholder="Aria"]').value;
+  const lastName = document.querySelector('#stepDelivery input[placeholder="Rose"]').value;
+  const email = document.querySelector('#stepDelivery input[type="email"]').value;
+  const phone = document.querySelector('#stepDelivery input[type="tel"]').value;
+  const address = document.querySelector('#stepDelivery input[placeholder="123 Blossom Street"]').value;
+  const city = document.querySelector('#stepDelivery input[placeholder="New York"]').value;
+  const zip = document.querySelector('#stepDelivery input[placeholder="10001"]').value;
+  const delivery = document.querySelector('.delivery-opt.selected b') ? document.querySelector('.delivery-opt.selected b').textContent : 'Standard';
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const items = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+
+  const order = {
+    orderId: Date.now(),
+    date: new Date().toLocaleString('en-IN'),
+    name: `${name} ${lastName}`.trim(),
+    email, phone, address, city, zip, delivery,
+    items,
+    total: inr(subtotal),
+    rawTotal: subtotal * USD_TO_INR
+  };
+
+  const orders = JSON.parse(localStorage.getItem('aa_orders') || '[]');
+  orders.push(order);
+  localStorage.setItem('aa_orders', JSON.stringify(orders));
+
   closeCheckout();
   cart = [];
   updateCartUI();

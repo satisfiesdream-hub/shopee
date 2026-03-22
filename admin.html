@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>A&A Shopee — Admin Orders</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --primary: #e8445a; --bg: #f8f8f8; --white: #fff; --text: #1a1a2e; --muted: #6b7280; --border: #e5e7eb; }
+    body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text); }
+
+    /* HEADER */
+    .admin-header {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 1px 8px rgba(0,0,0,.06); position: sticky; top: 0; z-index: 10;
+    }
+    .admin-header .logo { display: flex; align-items: center; gap: .75rem; }
+    .admin-header .logo img { height: 38px; object-fit: contain; }
+    .admin-header .logo span { font-size: .8rem; background: var(--primary); color: #fff; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+    .back-btn {
+      display: flex; align-items: center; gap: .4rem;
+      color: var(--muted); font-size: .85rem; text-decoration: none; transition: color .2s;
+    }
+    .back-btn:hover { color: var(--primary); }
+
+    /* STATS */
+    .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; padding: 2rem 2rem 1rem; }
+    .stat-card {
+      background: var(--white); border-radius: 12px; padding: 1.25rem 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06); display: flex; align-items: center; gap: 1rem;
+    }
+    .stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .stat-icon.red { background: #fff0f3; color: var(--primary); }
+    .stat-icon.green { background: #f0fdf4; color: #10b981; }
+    .stat-icon.blue { background: #eff6ff; color: #3b82f6; }
+    .stat-icon.orange { background: #fff7ed; color: #f97316; }
+    .stat-label { font-size: .75rem; color: var(--muted); margin-bottom: .2rem; }
+    .stat-value { font-size: 1.3rem; font-weight: 700; }
+
+    /* TOOLBAR */
+    .toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; flex-wrap: wrap; gap: .75rem;
+    }
+    .toolbar-left { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+    .search-box {
+      display: flex; align-items: center; gap: .5rem;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 8px; padding: .45rem .85rem;
+    }
+    .search-box input { border: none; outline: none; font-size: .85rem; width: 200px; }
+    .search-box i { color: var(--muted); font-size: .85rem; }
+    .filter-select {
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: .45rem .75rem; font-size: .85rem; background: var(--white); outline: none; cursor: pointer;
+    }
+    .toolbar-right { display: flex; gap: .6rem; }
+    .btn { display: inline-flex; align-items: center; gap: .4rem; padding: .5rem 1rem; border-radius: 8px; font-size: .85rem; font-weight: 500; cursor: pointer; border: none; transition: all .2s; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: #c73249; }
+    .btn-danger { background: #fff0f3; color: var(--primary); border: 1px solid #fecdd3; }
+    .btn-danger:hover { background: var(--primary); color: #fff; }
+
+    /* TABLE */
+    .table-wrap { padding: 0 2rem 3rem; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+    thead { background: #fdf2f4; }
+    th { padding: .85rem 1rem; text-align: left; font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); white-space: nowrap; }
+    td { padding: .85rem 1rem; font-size: .85rem; border-top: 1px solid var(--border); vertical-align: middle; }
+    tr:hover td { background: #fafafa; }
+    .order-id { font-weight: 600; color: var(--primary); }
+    .items-cell { max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .total-cell { font-weight: 600; color: #10b981; }
+    .del-badge {
+      display: inline-flex; align-items: center; gap: .3rem;
+      padding: 2px 8px; border-radius: 12px; font-size: .75rem; font-weight: 500;
+    }
+    .del-badge.standard { background: #eff6ff; color: #3b82f6; }
+    .del-badge.express { background: #fff7ed; color: #f97316; }
+    .action-btn { background: none; border: none; cursor: pointer; color: var(--muted); font-size: .9rem; padding: 4px 6px; border-radius: 4px; transition: color .2s; }
+    .action-btn:hover { color: var(--primary); }
+
+    /* EMPTY */
+    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+    .empty-state i { font-size: 3rem; margin-bottom: 1rem; display: block; color: #e5e7eb; }
+    .empty-state p { font-size: .9rem; }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: 16px; padding: 2rem; width: 100%; max-width: 480px; position: relative; }
+    .modal h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.25rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--muted); }
+    .detail-row { display: flex; justify-content: space-between; padding: .5rem 0; border-bottom: 1px solid var(--border); font-size: .88rem; }
+    .detail-row:last-child { border: none; }
+    .detail-row span:first-child { color: var(--muted); }
+    .detail-row span:last-child { font-weight: 500; text-align: right; max-width: 60%; }
+
+    @media (max-width: 600px) {
+      .stats { padding: 1rem; }
+      .toolbar { padding: 1rem; }
+      .table-wrap { padding: 0 1rem 2rem; }
+      .search-box input { width: 140px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="admin-header">
+  <div class="logo">
+    <img src="src/images/logo.png" alt="A&A Shopee"/>
+    <span>Admin</span>
+  </div>
+  <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Shop</a>
+</header>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-card">
+    <div class="stat-icon red"><i class="fa-solid fa-bag-shopping"></i></div>
+    <div><p class="stat-label">Total Orders</p><p class="stat-value" id="statTotal">0</p></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+    <div><p class="stat-label">Total Revenue</p><p class="stat-value" id="statRevenue">₹0</p></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fa-solid fa-truck"></i></div>
+    <div><p class="stat-label">Standard Delivery</p><p class="stat-value" id="statStandard">0</p></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon orange"><i class="fa-solid fa-bolt"></i></div>
+    <div><p class="stat-label">Express Delivery</p><p class="stat-value" id="statExpress">0</p></div>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-left">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search by name, email..." oninput="renderTable()"/>
+    </div>
+    <select class="filter-select" id="deliveryFilter" onchange="renderTable()">
+      <option value="all">All Deliveries</option>
+      <option value="Standard">Standard</option>
+      <option value="Express">Express</option>
+    </select>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn btn-primary" onclick="exportExcel()"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
+    <button class="btn btn-danger" onclick="clearOrders()"><i class="fa-solid fa-trash"></i> Clear All</button>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="table-wrap">
+  <table id="ordersTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Order ID</th>
+        <th>Date</th>
+        <th>Customer</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>City</th>
+        <th>Items</th>
+        <th>Delivery</th>
+        <th>Total</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="ordersBody"></tbody>
+  </table>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <i class="fa-regular fa-folder-open"></i>
+    <p>No orders yet. Orders will appear here once customers place them.</p>
+  </div>
+</div>
+
+<!-- ORDER DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    <h3>Order Details</h3>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+  let orders = JSON.parse(localStorage.getItem('aa_orders') || '[]');
+
+  function renderStats() {
+    document.getElementById('statTotal').textContent = orders.length;
+    const revenue = orders.reduce((s, o) => s + (o.rawTotal || 0), 0);
+    document.getElementById('statRevenue').textContent = '₹' + revenue.toLocaleString('en-IN');
+    document.getElementById('statStandard').textContent = orders.filter(o => o.delivery === 'Standard').length;
+    document.getElementById('statExpress').textContent = orders.filter(o => o.delivery === 'Express').length;
+  }
+
+  function renderTable() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const filter = document.getElementById('deliveryFilter').value;
+    const filtered = orders.filter(o => {
+      const matchSearch = !search || o.name.toLowerCase().includes(search) || o.email.toLowerCase().includes(search) || o.city.toLowerCase().includes(search);
+      const matchFilter = filter === 'all' || o.delivery === filter;
+      return matchSearch && matchFilter;
+    });
+
+    const tbody = document.getElementById('ordersBody');
+    const empty = document.getElementById('emptyState');
+
+    if (!filtered.length) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    tbody.innerHTML = filtered.map((o, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td class="order-id">#${o.orderId}</td>
+        <td>${o.date}</td>
+        <td>${o.name}</td>
+        <td>${o.email}</td>
+        <td>${o.phone}</td>
+        <td>${o.city}</td>
+        <td class="items-cell" title="${o.items}">${o.items}</td>
+        <td><span class="del-badge ${o.delivery.toLowerCase()}">${o.delivery}</span></td>
+        <td class="total-cell">${o.total}</td>
+        <td>
+          <button class="action-btn" onclick="viewOrder(${orders.indexOf(o)})" title="View"><i class="fa-solid fa-eye"></i></button>
+          <button class="action-btn" onclick="deleteOrder(${orders.indexOf(o)})" title="Delete"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      </tr>`).join('');
+  }
+
+  function viewOrder(idx) {
+    const o = orders[idx];
+    document.getElementById('modalContent').innerHTML = `
+      <div class="detail-row"><span>Order ID</span><span>#${o.orderId}</span></div>
+      <div class="detail-row"><span>Date</span><span>${o.date}</span></div>
+      <div class="detail-row"><span>Name</span><span>${o.name}</span></div>
+      <div class="detail-row"><span>Email</span><span>${o.email}</span></div>
+      <div class="detail-row"><span>Phone</span><span>${o.phone}</span></div>
+      <div class="detail-row"><span>Address</span><span>${o.address}, ${o.city} - ${o.zip}</span></div>
+      <div class="detail-row"><span>Delivery</span><span>${o.delivery}</span></div>
+      <div class="detail-row"><span>Items</span><span>${o.items}</span></div>
+      <div class="detail-row"><span>Total</span><span style="color:#10b981;font-weight:700">${o.total}</span></div>`;
+    document.getElementById('detailModal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('detailModal').classList.remove('open');
+  }
+
+  function deleteOrder(idx) {
+    if (!confirm('Delete this order?')) return;
+    orders.splice(idx, 1);
+    localStorage.setItem('aa_orders', JSON.stringify(orders));
+    renderStats();
+    renderTable();
+  }
+
+  function clearOrders() {
+    if (!confirm('Clear ALL orders? This cannot be undone.')) return;
+    orders = [];
+    localStorage.setItem('aa_orders', JSON.stringify(orders));
+    renderStats();
+    renderTable();
+  }
+
+  function exportExcel() {
+    if (!orders.length) { alert('No orders to export.'); return; }
+    const rows = [['Order ID','Date','Name','Email','Phone','Address','City','ZIP','Delivery','Items','Total']];
+    orders.forEach(o => rows.push([o.orderId, o.date, o.name, o.email, o.phone, o.address, o.city, o.zip, o.delivery, o.items, o.total]));
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = rows[0].map(() => ({ wch: 20 }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Orders');
+    XLSX.writeFile(wb, 'AA_Shopee_Orders.xlsx');
+  }
+
+  renderStats();
+  renderTable();
+</script>
+</body>
+</html>
